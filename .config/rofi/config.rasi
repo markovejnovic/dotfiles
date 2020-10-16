@@ -1,0 +1,8 @@
+configuration {
+	width: 30;
+	lines: 10;
+	font: "Terminus (TTF) 9";
+	terminal: "alacritty";
+
+}
+@import "/usr/share/rofi/themes/Monokai.rasi"

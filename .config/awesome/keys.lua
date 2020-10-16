@@ -39,6 +39,16 @@ keys.global = gears.table.join(
 		}
 	),
 
+	awful.key({}, "Print",
+		function ()
+			awful.spawn.with_shell('flameshot gui')
+		end,
+		{
+			description = "Spawn Flameshot",
+			group = "launcher",
+		}
+	),
+
 	-----------------
 	-- Awesome Util
 	-----------------

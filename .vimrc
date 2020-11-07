@@ -6,14 +6,21 @@ call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'sickill/vim-monokai'
+Plugin 'tomasr/molokai'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'preservim/nerdtree'
 Plugin 'justinmk/vim-sneak'
 Plugin 'sheerun/vim-polyglot'
+Plugin 'airblade/vim-gitgutter'
 Plugin 'mattn/emmet-vim'
 Plugin 'neoclide/coc.nvim', {'branch': 'release'}
 Plugin 'markovejnovic/vim-dssl2'
+Plugin 'tmhedberg/matchit'
+Plugin 'raingo/vim-matlab'
+Plugin 'Yggdroot/indentLine'
+Plugin 'tpope/vim-scriptease'
+Plugin 'wlangstroth/vim-racket'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -25,10 +32,9 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 syntax enable
-let g:vim_monokai_tasty_italic = 1
-colorscheme monokai
+colorscheme molokai
 
-let g:airline_theme='monokai_tasty'
+let g:airline_theme='molokai'
 let g:airline#extensions#tabline#enabled = 1
 
 " QOL
@@ -179,3 +185,34 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
+" Matlab crap
+autocmd BufEnter *.m    set ft=matlab
+autocmd BufEnter *.m    compiler mlint
+
+" Numbering
+set number relativenumber
+
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+augroup END
+
+" coc snippets
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+
+" Use <C-j> for select text for visual placeholder of snippet.
+vmap <C-j> <Plug>(coc-snippets-select)
+
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-j>'
+
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-k>'
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+
+" Use <leader>x for convert visual selected code to snippet
+xmap <leader>x  <Plug>(coc-convert-snippet)

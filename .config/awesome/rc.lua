@@ -5,7 +5,6 @@ pcall(require, "luarocks.loader")
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
-local widgets = require('widgets')
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
@@ -19,6 +18,12 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 local utils = require("utils")
+
+local wifulbat = require('wiful.battery')
+local batteryw = require('widgets.battery')
+
+local wifultemp = require('wiful.temperature')
+local tempw = require('widgets.temperature')
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -184,6 +189,7 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = tasklist_buttons
     }
 
+
     -- Create the wibox
     s.mywibox = awful.wibar({
         position = "top",
@@ -205,7 +211,8 @@ awful.screen.connect_for_each_screen(function(s)
             mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
-            widgets.battery,
+            batteryw,
+            tempw,
             s.mylayoutbox,
         },
     }
@@ -461,7 +468,9 @@ end)
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
-    c:emit_signal("request::activate", "mouse_enter", {raise = false})
+    ; if client.focus.class ~= "jetbrains-studio" then
+    ;    c:emit_signal("request::activate", "mouse_enter", {raise = false})
+    ; end
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)

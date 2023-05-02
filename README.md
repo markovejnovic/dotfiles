@@ -1,4 +1,7 @@
-# dotfiles
+# [ARCHIVED] dotfiles
+
+See my revised dotfiles labeled `dotfiles\-.*`
+
 My dotfiles...
 
 ## Stuff supported here

@@ -1,0 +1,33 @@
+# .bash_profile
+
+# If .bash_profile exists, bash doesn't read .profile
+if [[ -f ~/.profile ]]; then
+  . ~/.profile
+fi
+
+# If the shell is interactive and .bashrc exists, get the aliases and functions
+if [[ $- == *i* && -f ~/.bashrc ]]; then
+    . ~/.bashrc
+fi
+
+# Created by `pipx` on 2024-11-29 06:49:20
+export PATH="$PATH:/Users/marko/.local/bin"
+
+
+# BEGIN opam configuration
+# This is useful if you're using opam as it adds:
+#   - the correct directories to the PATH
+#   - auto-completion for the opam binary
+# This section can be safely removed at any time if needed.
+test -r '/Users/marko/.opam/opam-init/init.sh' && . '/Users/marko/.opam/opam-init/init.sh' > /dev/null 2> /dev/null || true
+# END opam configuration
+
+[[ -f ~/.bashrc ]] && . ~/.bashrc # ghcup-env
+export PATH="/Users/marko/.local/share/solana/install/active_release/bin:$PATH"
+. "$HOME/.cargo/env"
+. "/Users/marko/.deno/env"
+source /Users/marko/.local/share/bash-completion/completions/deno.bash
+
+. "$HOME/.atuin/bin/env"
+
+[[ -r ~/.bashrc ]] && source ~/.bashrc

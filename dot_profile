@@ -1,0 +1,9 @@
+
+
+export PATH="$HOME/Library/Python/3.13/bin:$PATH"
+
+. "$HOME/.cargo/env"
+
+[ -f "/Users/marko/.ghcup/env" ] && . "/Users/marko/.ghcup/env" # ghcup-env
+
+. "$HOME/.atuin/bin/env"

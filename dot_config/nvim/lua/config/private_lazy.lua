@@ -21,6 +21,14 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- rustaceanvim owns rust-analyzer (keep it out of every other LSP setup).
+-- Pin the binary to mason's copy so its `cmd` never resolves to nil.
+vim.g.rustaceanvim = {
+  server = {
+    cmd = { vim.fn.expand("$HOME/.local/share/nvim/mason/bin/rust-analyzer") },
+  },
+}
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
@@ -34,39 +42,40 @@ require("lazy").setup({
       end
     },
     {
-      "mason-org/mason-lspconfig.nvim",
+      "mason-org/mason.nvim",
+      opts = {},
+    },
+    {
+      "WhoIsSethDaniel/mason-tool-installer.nvim",
+      dependencies = { "mason-org/mason.nvim" },
       opts = {
+        -- mason PACKAGE names (not lspconfig names). Install-only: nothing here
+        -- enables an LSP, so it never collides with rustaceanvim.
         ensure_installed = {
-          "bashls",
+          "bash-language-server",
           "clangd",
-          "cssls",
-          "docker_compose_language_service",
-          "dockerls",
+          "css-lsp",
+          "docker-compose-language-service",
+          "dockerfile-language-server",
           "expert",
-          "hls",
-          "html",
-          "jsonls",
-          "lua_ls",
+          "haskell-language-server",
+          "html-lsp",
+          "json-lsp",
+          "lua-language-server",
           "marksman",
           "pyright",
+          "rust-analyzer",
           "sqlls",
-          "tailwindcss",
+          "tailwindcss-language-server",
           "taplo",
-          "ts_ls",
-          "yamlls",
+          "typescript-language-server",
+          "yaml-language-server",
           "zls",
         },
-        automatic_enable = {
-          exclude = { "rust_analyzer", "elixirls" },
-        },
-        handlers = {
-          rust_analyzer = function() end,
-        },
       },
-      dependencies = {
-        { "mason-org/mason.nvim", opts = {} },
-        "neovim/nvim-lspconfig",
-      },
+    },
+    {
+      "neovim/nvim-lspconfig",
     },
     {
       "nvim-treesitter/nvim-treesitter",
@@ -298,6 +307,29 @@ vim.lsp.config("sourcekit", {
   filetypes = { "swift", "objc", "objcpp" },
 })
 vim.lsp.enable("sourcekit")
+
+-- LSP servers to start automatically. rust-analyzer is intentionally absent:
+-- rustaceanvim owns it. Configs come from nvim-lspconfig; binaries from mason.
+vim.lsp.enable({
+  "bashls",
+  "clangd",
+  "cssls",
+  "docker_compose_language_service",
+  "dockerls",
+  "expert",
+  "hls",
+  "html",
+  "jsonls",
+  "lua_ls",
+  "marksman",
+  "pyright",
+  "sqlls",
+  "tailwindcss",
+  "taplo",
+  "ts_ls",
+  "yamlls",
+  "zls",
+})
 
 vim.api.nvim_create_autocmd("CursorHold", {
   callback = function()

@@ -21,14 +21,6 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- rustaceanvim owns rust-analyzer (keep it out of every other LSP setup).
--- Pin the binary to mason's copy so its `cmd` never resolves to nil.
-vim.g.rustaceanvim = {
-  server = {
-    cmd = { vim.fn.expand("$HOME/.local/share/nvim/mason/bin/rust-analyzer") },
-  },
-}
-
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
@@ -37,9 +29,29 @@ require("lazy").setup({
       priority = 1000,
       config = function()
         vim.opt.termguicolors = true
-        vim.opt.background = "light"
-        vim.cmd.colorscheme("PaperColorSlimLight")
       end
+    },
+    {
+      -- Follow macOS system appearance: light system -> PaperColorSlimLight,
+      -- dark system -> PaperColorSlimDark. Polls every update_interval ms and
+      -- applies once on startup. Depends on the theme so its colorschemes and
+      -- termguicolors are ready before we set them here.
+      "f-person/auto-dark-mode.nvim",
+      dependencies = { "pappasam/papercolor-theme-slim" },
+      lazy = false,
+      priority = 1000,
+      opts = {
+        update_interval = 3000,
+        fallback = "light",
+        set_dark_mode = function()
+          vim.opt.background = "dark"
+          vim.cmd.colorscheme("PaperColorSlim")
+        end,
+        set_light_mode = function()
+          vim.opt.background = "light"
+          vim.cmd.colorscheme("PaperColorSlimLight")
+        end,
+      },
     },
     {
       "mason-org/mason.nvim",
@@ -49,8 +61,8 @@ require("lazy").setup({
       "WhoIsSethDaniel/mason-tool-installer.nvim",
       dependencies = { "mason-org/mason.nvim" },
       opts = {
-        -- mason PACKAGE names (not lspconfig names). Install-only: nothing here
-        -- enables an LSP, so it never collides with rustaceanvim.
+        -- mason PACKAGE names (not lspconfig names). Install-only: this list
+        -- just installs binaries; LSPs are turned on via vim.lsp.enable below.
         ensure_installed = {
           "bash-language-server",
           "clangd",
@@ -64,7 +76,6 @@ require("lazy").setup({
           "lua-language-server",
           "marksman",
           "pyright",
-          "rust-analyzer",
           "sqlls",
           "tailwindcss-language-server",
           "taplo",
@@ -274,12 +285,6 @@ require("lazy").setup({
       },
     },
     {
-      "zeioth/garbage-day.nvim",
-      dependencies = "neovim/nvim-lspconfig",
-      event = "VeryLazy",
-      opts = {},
-    },
-    {
       "folke/snacks.nvim",
       priority = 1000,
       lazy = false,
@@ -288,11 +293,6 @@ require("lazy").setup({
         notifier = { enabled = true },
         quickfile = { enabled = true },
       },
-    },
-    {
-      "mrcjkb/rustaceanvim",
-      version = "^8",
-      lazy = false,
     },
   },
   -- Configure any other settings here. See the documentation for more details.
@@ -308,8 +308,15 @@ vim.lsp.config("sourcekit", {
 })
 vim.lsp.enable("sourcekit")
 
--- LSP servers to start automatically. rust-analyzer is intentionally absent:
--- rustaceanvim owns it. Configs come from nvim-lspconfig; binaries from mason.
+-- rust-analyzer: use the rustup proxy so the server (and its proc-macro
+-- server) always matches the active toolchain. Defaults (root_dir/filetypes)
+-- come from nvim-lspconfig; we only override the binary.
+vim.lsp.config("rust_analyzer", {
+  cmd = { vim.fn.expand("$HOME/.cargo/bin/rust-analyzer") },
+})
+
+-- LSP servers to start automatically. Configs come from nvim-lspconfig;
+-- binaries from mason, except rust_analyzer (rustup proxy, above).
 vim.lsp.enable({
   "bashls",
   "clangd",
@@ -323,12 +330,19 @@ vim.lsp.enable({
   "lua_ls",
   "marksman",
   "pyright",
+  "rust_analyzer",
   "sqlls",
   "tailwindcss",
   "taplo",
   "ts_ls",
   "yamlls",
   "zls",
+})
+
+-- Format Rust on save via rust-analyzer (rustfmt).
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.rs",
+  callback = function() vim.lsp.buf.format() end,
 })
 
 vim.api.nvim_create_autocmd("CursorHold", {

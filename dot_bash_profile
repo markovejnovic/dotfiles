@@ -31,3 +31,4 @@ source /Users/marko/.local/share/bash-completion/completions/deno.bash
 . "$HOME/.atuin/bin/env"
 
 [[ -r ~/.bashrc ]] && source ~/.bashrc
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"

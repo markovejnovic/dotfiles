@@ -40,6 +40,9 @@ PROMPT_COMMAND="precmd;$PROMPT_COMMAND"
 [ -f "/Users/marko/.ghcup/env" ] && . "/Users/marko/.ghcup/env" # ghcup-env
 
 alias clayolo="claude --dangerously-skip-permissions --model=claude-opus-4-8"
+alias gc="git checkout"
+alias gcb="git checkout -b"
+alias gcwt="git checkout --ignore-other-worktrees"
 
 . "$HOME/.atuin/bin/env"
 
@@ -50,3 +53,4 @@ eval "$(atuin init bash)"
 export PATH="$HOME/.grok/bin:$PATH"
 [[ -r "$HOME/.grok/completions/bash/grok.bash" ]] && source "$HOME/.grok/completions/bash/grok.bash"
 # <<< grok installer <<<
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
